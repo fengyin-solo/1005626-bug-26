@@ -1,5 +1,7 @@
 import { MODULE_BY_KEY } from '@/data/modules'
 import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
+import { rowHasIssue } from '@/data/repair'
+import { writebackVerifyLedger } from '@/data/verify-ledger'
 import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
@@ -43,16 +45,35 @@ export function runAction(key: string, id: number, action: string): ActionResult
   if (current === target) {
     return { ok: false, message: `${meta.entity}已经是「${target}」，不用重复操作` }
   }
-  const lastStatus = meta.statuses[meta.statuses.length - 1]
+  // 既有抢修做法：动作只能在允许的起始状态上执行，重复派修同一管段不会再造出第二条。
+  const allowed = meta.actionFrom?.[action]
+  if (allowed && !allowed.includes(current)) {
+    return { ok: false, message: `${meta.entity}当前为「${current}」，不能执行「${action}」` }
+  }
+  const closedStatuses = meta.closedStatuses ?? [meta.statuses[meta.statuses.length - 1]]
   const updated: EntryRow = {
     ...rows[index],
     status: target,
-    pending: target !== lastStatus,
-    abnormal: NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
+    pending: !closedStatuses.includes(target),
+    abnormal:
+      key === 'emergencyrepair'
+        ? rowHasIssue({ ...rows[index], status: target })
+        : NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
   }
   const next = [...rows]
   next[index] = updated
   saveRows(key, next)
+
+  // 抢修办结（确认恢复）后，结果回写到巡检那边的待核实台账；台账按抢修编号去重。
+  if (key === 'emergencyrepair' && action === '确认恢复') {
+    const { created } = writebackVerifyLedger(updated)
+    return {
+      ok: true,
+      message: created
+        ? `${meta.entity}已${action}，当前状态「${target}」，结果已回写巡检待核实台账`
+        : `${meta.entity}已${action}，当前状态「${target}」，待核实台账已有该单，未重复登记`,
+    }
+  }
   return { ok: true, message: `${meta.entity}已${action}，当前状态「${target}」` }
 }
 

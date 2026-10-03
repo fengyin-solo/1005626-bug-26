@@ -82,9 +82,9 @@ import {
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('stationpatrol')
-const columns = ["巡检编号", "巡检站点", "巡检路线", "巡检人", "巡检日期", "发现问题数", "整改期限", "巡检状态"]
+const columns = ["巡检编号", "关联抢修", "巡检站点", "巡检路线", "巡检人", "巡检日期", "发现问题数", "整改期限", "巡检状态"]
 const actions = ["提交巡检", "确认整改", "上报问题"]
-const statuses = ["待巡检", "巡检中", "已整改", "已上报"]
+const statuses = ["待巡检", "巡检中", "已整改", "已上报", "待核实"]
 const stats = [{"label": "待巡检站点", "value": 0}, {"label": "待整改问题", "value": 0}, {"label": "本月巡检次数", "value": 0}]
 
 const rows = ref<EntryRow[]>([])

@@ -35,3 +35,36 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+
+/* 夜班值守面板 */
+.duty-panel { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.duty-title { margin: 0 0 10px; font-size: 14px; }
+.duty-empty { margin: 0; color: var(--muted); font-size: 13px; }
+.duty-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.duty-card { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: #fbfdff; }
+.duty-card.is-abnormal { border-color: #f04438; background: #fff5f4; }
+.duty-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.duty-status { font-size: 12px; border-radius: 999px; padding: 1px 10px; background: #eef2f7; color: #475467; }
+.duty-status[data-status="待派修"] { background: #fff4e5; color: #b54708; }
+.duty-status[data-status="抢修中"] { background: #e0edff; color: #1849a9; }
+.duty-status[data-status="已升级"] { background: #fef3f2; color: #b42318; }
+.duty-fields { display: flex; flex-direction: column; gap: 4px; margin: 0 0 8px; }
+.duty-fields div { display: flex; gap: 8px; font-size: 12px; }
+.duty-fields dt { color: var(--muted); width: 56px; flex-shrink: 0; }
+.duty-fields dd { margin: 0; }
+
+/* 缺项与异常单元格：缺项照常占格并说明原因，异常值单独标出 */
+.cell-missing { color: var(--muted); border-bottom: 1px dashed #98a2b3; cursor: help; }
+.cell-abnormal { color: #b42318; font-weight: 600; cursor: help; }
+.cell-missing em, .cell-abnormal em { display: block; font-style: normal; font-weight: 400; font-size: 11px; }
+.cell-abnormal em { color: #b42318; }
+.repair-table tr.row-abnormal { background: #fffafa; }
+.ok-text { color: #067647; }
+
+/* 详情弹窗 */
+.modal-mask { position: fixed; inset: 0; background: rgba(16, 24, 40, 0.45); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal { background: #fff; border-radius: 10px; width: min(640px, 92vw); max-height: 86vh; overflow: auto; padding: 16px; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.modal-head h3 { margin: 0; font-size: 16px; }
+.detail-table th { width: 110px; background: #f8fafc; }
+.modal-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; font-size: 12px; }
